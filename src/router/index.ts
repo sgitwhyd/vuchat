@@ -1,5 +1,6 @@
-import ChatRoom from '@/pages/ChatRoom.vue'
+
 import Home from '@/pages/Home.vue'
+import NotFound from '@/pages/NotFound.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routers = [
@@ -11,7 +12,12 @@ const routers = [
   {
     path: '/chat/:roomId',
     name: 'ChatRoom',
-    component: ChatRoom,
+    component: Home,
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFound,
   },
 ]
 
