@@ -35,9 +35,6 @@ export const useChatStore = defineStore('chat', {
 
     getMessage(roomId: string) {
       const messages = this.messages.filter((message) => message.room_id === roomId)
-      if(messages.length === 0) {
-       router.push('/not-found')
-      }
       return messages
     },
 

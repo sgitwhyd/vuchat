@@ -35,6 +35,7 @@ import { useRoomStore } from '@/stores/room_store'
 import type { Chat } from '@/utils/utils'
 import { rooms } from '@/data/rooms'
 import InputMessage from '@/components/InputMessage.vue'
+import router from '@/router'
 
 const props = defineProps<{
     roomId: string | null
@@ -44,6 +45,17 @@ const chatStore = useChatStore()
 const messagesContainer = ref<HTMLElement | null>(null)
 const messages = ref<Chat[]>([])
 const roomStore = useRoomStore()
+
+onMounted(() => {
+
+    if (props.roomId) {
+        const room = roomStore.rooms.find((room) => room.room_id === props.roomId)
+
+        if (!room) {
+            router.push('/not-found')
+        }
+    }
+})
 
 const room = computed(() => {
     if (roomStore.getRoom) {
