@@ -1,21 +1,12 @@
-import { generateDummyChat } from '@/utils/utils'
+import { generateDummyChat, type Chat } from '@/utils/utils'
 import { defineStore } from 'pinia'
-import {type Chat} from '@/utils/utils'
-
-
-interface User {
-  id: number
-  name: string
-  avatar: string
-}
 
 const CHAT_STORAGE_KEY = 'chats'
-import router from '@/router'
 
 export const useChatStore = defineStore('chat', {
   state: () => ({
     messages: [] as Chat[],
-    isLoading: false,
+    isLoading: true,
   }),
 
   getters: {
@@ -24,13 +15,22 @@ export const useChatStore = defineStore('chat', {
 
   actions: {
     setMessage() {
-      if (localStorage.getItem(CHAT_STORAGE_KEY)) {
-        this.messages = JSON.parse(localStorage.getItem(CHAT_STORAGE_KEY) || '[]')
-      } else {
-        const dummyChat = generateDummyChat()
-        this.messages = dummyChat
-        localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(dummyChat))
+      try {
+        if (localStorage.getItem(CHAT_STORAGE_KEY)) {
+          this.messages = JSON.parse(localStorage.getItem(CHAT_STORAGE_KEY) || '[]')
+        } else {
+          const dummyChat = generateDummyChat()
+          this.messages = dummyChat
+          localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(dummyChat))
+        }
+      } finally {
+        setTimeout(() => {
+          this.setIsLoading(false)
+        }, 800)
       }
+    },
+    setIsLoading(isLoading: boolean) {
+      this.isLoading = isLoading
     },
 
     getMessage(roomId: string) {
@@ -39,7 +39,6 @@ export const useChatStore = defineStore('chat', {
     },
 
     addMessage(content: string, roomId: string, userId: string | null) {
-
       const newMessage: Chat = {
         id: new Date().getTime(),
         room_id: roomId,
@@ -47,10 +46,10 @@ export const useChatStore = defineStore('chat', {
         is_sender: true,
         user_id: userId,
         user_avatar_url: null,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       }
       this.messages.push(newMessage)
       localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(this.messages))
-    }
-  }
-}) 
+    },
+  },
+})
